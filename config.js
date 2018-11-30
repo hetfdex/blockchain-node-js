@@ -1,7 +1,9 @@
+const cryptoHash = require("./crypto-hash");
+
 const GENESIS_DATA = {
   timestamp: Date.now(),
-  lastHash: "temp-genesis-lastHash",
-  hash: "temp-genesis-hash",
+  lastHash: cryptoHash("genesis-lastHash"),
+  hash: cryptoHash("genesis-hash"),
   data: []
 };
 
