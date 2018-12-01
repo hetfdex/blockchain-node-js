@@ -22,7 +22,7 @@ class Blockchain {
     }
 
     for (let i = 1; i < chain.length; i++) {
-      const {timestamp, lastHash, hash, data} = chain[i];
+      const {timestamp, lastHash, hash, data, nonce, difficulty} = chain[i];
       const realLastHash = chain[i - 1].hash;
 
       if (lastHash !== realLastHash) {
@@ -30,7 +30,7 @@ class Blockchain {
 
         return false;
       }
-      const validHash = cryptoHash(timestamp, lastHash, data);
+      const validHash = cryptoHash(timestamp, lastHash, data, nonce, difficulty);
 
       if (hash !== validHash) {
         console.error("Validation Fail: Hash must be valid");
