@@ -16,6 +16,8 @@ class Blockchain {
 
   static isValidChain(chain) {
     if (JSON.stringify(chain[0]) !== JSON.stringify(Block.genesis())) {
+      console.error("Validation Fail: First Block must be Genesis");
+
       return false;
     }
 
@@ -24,26 +26,35 @@ class Blockchain {
       const realLastHash = chain[i - 1].hash;
 
       if (lastHash !== realLastHash) {
+        console.error("Validation Fail: Previous Hash must be equal to Hash of previous Block");
+
         return false;
       }
-
       const validHash = cryptoHash(timestamp, lastHash, data);
 
       if (hash !== validHash) {
+        console.error("Validation Fail: Hash must be valid");
+
         return false;
       }
     }
+    console.log("Blockchain valid", chain);
+
     return true;
   }
 
   replaceChain(chain) {
     if (chain.length <= this.chain.length) {
-      return;
-    }
+      console.error("Replacement Fail: Chain must be longer than original");
 
-    if (!Blockchain.isValidChain(chain)) {
       return;
     }
+    if (!Blockchain.isValidChain(chain)) {
+      console.error("Replacement Fail: Chain must be valid");
+
+      return;
+    }
+    console.log("Blockchain replaced", chain);
 
     this.chain = chain;
   }

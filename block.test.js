@@ -7,7 +7,6 @@ describe("Block", () => {
   const lastHash = "test-lastHash";
   const hash = "test-hash";
   const data = [];
-
   const block = new Block({timestamp, lastHash, hash, data});
 
   it("has `timestamp`", () => {
@@ -40,9 +39,7 @@ describe("Block", () => {
 
   describe("mineBlock()", () => {
     const lastBlock = Block.genesis();
-
     const data = [];
-
     const minedBlock = Block.mineBlock({lastBlock, data});
 
     it("is Block instance", () => {

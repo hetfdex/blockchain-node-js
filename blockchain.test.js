@@ -67,7 +67,7 @@ describe("Blockchain", () => {
 
     describe("replaceChain()", () => {
       describe("`replacementChain` is shorter", () => {
-        it("doesn't not replace `blockchain`", () => {
+        it("doesn't replace `blockchain`", () => {
           replacementChain.chain[0] = {data: "fake-data"};
 
           blockchain.replaceChain(replacementChain.chain);
@@ -84,7 +84,7 @@ describe("Blockchain", () => {
         });
 
         describe("`replacementChain` is not valid", () => {
-          it("doesn't not replace `blockchain`", () => {
+          it("doesn't replace `blockchain`", () => {
             replacementChain.chain[2].lastHash = "fake-lastHash";
 
             blockchain.replaceChain(replacementChain.chain);
