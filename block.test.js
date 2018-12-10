@@ -8,7 +8,7 @@ describe("Block", () => {
   const hash = "test-hash";
   const data = [];
   const nonce = 0;
-  const difficulty = 0;
+  const difficulty = 1;
   const block = new Block({timestamp, lastHash, hash, data, nonce, difficulty});
 
   it("has `timestamp`", () => {
@@ -76,19 +76,31 @@ describe("Block", () => {
       expect(minedBlock.data).toEqual(data);
     });
 
+    it("adjusts 'difficulty'", () => {
+      const possibleResults = [lastBlock.difficulty - 1, lastBlock.difficulty + 1];
+
+      expect(possibleResults.includes(minedBlock.difficulty)).toBe(true);
+    });
+
     describe("adjustDifficulty()", () => {
-      it("raises the difficulty if mining is too quick", () => {
+      it("raises the 'difficulty' if mining is too quick", () => {
         expect(Block.adjustDifficulty({
           block,
           timestamp: block.timestamp + MINE_RATE - 100
         })).toEqual(block.difficulty + 1);
       });
 
-      it("lowers the difficulty if mining is too slow", () => {
+      it("lowers the 'difficulty' if mining is too slow", () => {
         expect(Block.adjustDifficulty({
           block,
           timestamp: block.timestamp + MINE_RATE + 100
         })).toEqual(block.difficulty - 1);
+      });
+
+      it("'difficulty' has a lower limit of 1", () => {
+        block.difficulty = -1;
+
+        expect(Block.adjustDifficulty({block: block})).toEqual(1);
       });
     });
   });
