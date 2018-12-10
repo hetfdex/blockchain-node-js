@@ -1,5 +1,5 @@
-const Block = require("./block");
 const cryptoHash = require("./crypto-hash");
+const Block = require("./block");
 
 class Blockchain {
   constructor() {
@@ -24,6 +24,7 @@ class Blockchain {
     for (let i = 1; i < chain.length; i++) {
       const {timestamp, lastHash, hash, data, nonce, difficulty} = chain[i];
       const realLastHash = chain[i - 1].hash;
+      const lastDifficulty = chain[i - 1].difficulty;
 
       if (lastHash !== realLastHash) {
         console.error("Validation Fail: Previous Hash must be equal to Hash of previous Block");
@@ -34,6 +35,12 @@ class Blockchain {
 
       if (hash !== validHash) {
         console.error("Validation Fail: Hash must be valid");
+
+        return false;
+      }
+
+      if (Math.abs((lastDifficulty - difficulty)) > 1) {
+        console.error("Validation Fail: Difficuly adjustment must be in steps of 1");
 
         return false;
       }

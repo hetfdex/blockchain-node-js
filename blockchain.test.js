@@ -1,3 +1,4 @@
+const cryptoHash = require("./crypto-hash");
 const Blockchain = require("./blockchain");
 const Block = require("./block");
 
@@ -46,7 +47,7 @@ describe("Blockchain", () => {
       beforeEach(() => {
         blockchain.addBlock({data: "data-one"});
         blockchain.addBlock({data: "data-two"});
-        blockchain.addBlock({data: "data-three  "});
+        blockchain.addBlock({data: "data-three"});
       });
 
       describe("a `lastHash` has changed", () => {
@@ -60,6 +61,25 @@ describe("Blockchain", () => {
       describe("a `block` with an invalid field", () => {
         it("returns false", () => {
           blockchain.chain[2].data = "fake-data";
+
+          expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
+        });
+      });
+
+      describe("a `block` with jumped difficulty", () => {
+        it("returns false", () => {
+          const lastBlock = blockchain.chain[blockchain.chain.length - 1];
+
+          const timestamp = Date.now();
+          const lastHash = lastBlock.hash;
+          const data = [];
+          const nonce = 0;
+          const difficulty = lastBlock.difficulty - 3;
+          const hash = cryptoHash(timestamp, lastHash, data, nonce, difficulty);
+
+          const badBlock = new Block({timestamp, lastHash, hash, data, nonce, difficulty});
+
+          blockchain.chain.push(badBlock);
 
           expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
         });
