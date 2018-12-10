@@ -1,18 +1,21 @@
 {
   "name": "blockchain-nodejs",
   "version": "1.0.0",
-  "description": "",
+  "description": "Fullstack blockchain",
   "main": "index.js",
   "scripts": {
     "test": "jest --watchAll",
     "start": "node index.js",
-    "dev": "npm  run start-redis && nodemon index.js",
+    "dev": "npm run start-redis && nodemon index.js",
+    "dev-peer": "cross-env GENERATE_PEER_PORT='true' nodemon index.js",
     "start-redis": "redis-server --daemonize yes"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "repository": "github:hetfdex/blockchain-node-js",
   "devDependencies": {
+    "cross-env": "^5.2.0",
     "jest": "^23.6.0",
     "nodemon": "^1.18.7"
   },
