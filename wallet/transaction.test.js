@@ -3,7 +3,7 @@ const Wallet = require("./index");
 const Transaction = require("./transaction");
 
 describe("Transaction", () => {
-  let transaction, senderWallet, recipient, amount;
+  let transaction, senderWallet, recipient, amount, errorMock, logMock;
 
   beforeEach(() => {
     senderWallet = new Wallet();
@@ -11,6 +11,12 @@ describe("Transaction", () => {
     amount = 100;
 
     transaction = new Transaction({senderWallet, recipient, amount});
+
+    errorMock = jest.fn();
+    logMock = jest.fn();
+
+    global.console.error = errorMock;
+    global.console.log = logMock;
   });
 
   it("has `id`", () => {
@@ -54,6 +60,35 @@ describe("Transaction", () => {
         data: transaction.outputMap,
         signature: transaction.input.signature
       })).toBe(true);
+    });
+  });
+
+  describe("validTransaction()", () => {
+    describe("`transaction` is valid", () => {
+      it("returns true and logs validation", () => {
+        expect(Transaction.isValidTransaction(transaction)).toBe(true);
+        expect(logMock).toHaveBeenCalled();
+      });
+    });
+
+    describe("`transaction` is invalid", () => {
+      describe("`transaction` `outputMap` is invalid", () => {
+        it("returns false and logs an error", () => {
+          transaction.outputMap[senderWallet.publicKey] = 9999;
+
+          expect(Transaction.isValidTransaction(transaction)).toBe(false);
+          expect(errorMock).toHaveBeenCalled();
+        });
+      });
+
+      describe("`transaction` `input` `signature` is invalid", () => {
+        it("returns false and logs an error", () => {
+          transaction.input.signature = new Wallet().sign("fake-data");
+
+          expect(Transaction.isValidTransaction(transaction)).toBe(false);
+          expect(errorMock).toHaveBeenCalled();
+        });
+      });
     });
   });
 });
