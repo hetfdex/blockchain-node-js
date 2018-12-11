@@ -3,7 +3,7 @@ const Wallet = require("./index");
 const Transaction = require("./transaction");
 
 describe("Transaction", () => {
-  let transaction, senderWallet, recipient, amount, errorMock, logMock;
+  let senderWallet, recipient, amount, transaction, errorMock, logMock;
 
   beforeEach(() => {
     senderWallet = new Wallet();
@@ -46,12 +46,12 @@ describe("Transaction", () => {
       expect(transaction.input).toHaveProperty("timestamp");
     });
 
-    it("contains `senderWallet`'s balance as `amount`", () => {
-      expect(transaction.input.amount).toEqual(senderWallet.balance);
-    });
-
     it("contains `senderWallet`'s publicKey as `address`", () => {
       expect(transaction.input.address).toEqual(senderWallet.publicKey);
+    });
+
+    it("contains `senderWallet`'s balance as `amount`", () => {
+      expect(transaction.input.amount).toEqual(senderWallet.balance);
     });
 
     it("is signed", () => {

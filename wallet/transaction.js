@@ -20,14 +20,14 @@ class Transaction {
   createInput ({senderWallet, outputMap}) {
     return {
       timestamp: Date.now(),
-      amount: senderWallet.balance,
       address: senderWallet.publicKey,
+      amount: senderWallet.balance,
       signature: senderWallet.sign(outputMap)
     };
   }
 
   static isValidTransaction(transaction) {
-    const {outputMap, input: {amount, address, signature}} = transaction;
+    const {outputMap, input: {address, amount, signature}} = transaction;
     const outputTotal = Object.values(outputMap).reduce((total, outputAmount) => total + outputAmount);
 
     if (outputTotal !== amount) {

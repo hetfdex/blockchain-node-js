@@ -16,7 +16,7 @@ class Blockchain {
 
   static isValidChain(chain) {
     if (JSON.stringify(chain[0]) !== JSON.stringify(Block.genesis())) {
-      console.error("Validation Fail: First Block must be Genesis");
+      console.error("Blockchain Validation Fail: First Block must be Genesis");
 
       return false;
     }
@@ -27,25 +27,25 @@ class Blockchain {
       const lastDifficulty = chain[i - 1].difficulty;
 
       if (lastHash !== realLastHash) {
-        console.error("Validation Fail: Previous Hash must be equal to Hash of previous Block");
+        console.error("Blockchain Validation Fail: Previous Hash must be equal to Hash of previous Block");
 
         return false;
       }
       const validHash = cryptoHash(timestamp, lastHash, data, nonce, difficulty);
 
       if (hash !== validHash) {
-        console.error("Validation Fail: Hash must be valid");
+        console.error("Blockchain Validation Fail: Hash must be valid");
 
         return false;
       }
 
       if (Math.abs((lastDifficulty - difficulty)) > 1) {
-        console.error("Validation Fail: Difficuly adjustment must be in steps of 1");
+        console.error("Blockchain Validation Fail: Difficuly adjustment must be in steps of 1");
 
         return false;
       }
     }
-    console.log("Blockchain valid", chain);
+    console.log("Blockchain Valid", chain);
 
     return true;
   }

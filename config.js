@@ -2,6 +2,7 @@ const {cryptoHash} = require("./util");
 
 const INITIAL_DIFFICULTY = 10;
 const MINE_RATE = 10;
+const START_BALANCE = 1000;
 
 const GENESIS_DATA = {
   timestamp: Date.now(),
@@ -12,6 +13,4 @@ const GENESIS_DATA = {
   difficulty: INITIAL_DIFFICULTY
 };
 
-const START_BALANCE = 1000;
-
-module.exports = {GENESIS_DATA, MINE_RATE, START_BALANCE};
+module.exports = {MINE_RATE, START_BALANCE, GENESIS_DATA};
