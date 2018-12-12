@@ -3,6 +3,7 @@ const express = require("express");
 const request = require("request");
 const Blockchain = require("./blockchain");
 const PubSub = require("./app/pubsub");
+const TransactionMiner = require("./app/transaction-miner");
 const TransactionPool = require("./wallet/transaction-pool");
 const Wallet = require("./wallet");
 
@@ -22,6 +23,7 @@ const blockchain = new Blockchain();
 const transactionPool = new TransactionPool();
 const pubsub = new PubSub({blockchain, transactionPool});
 const wallet = new Wallet();
+const transactionMiner = new TransactionMiner({blockchain, transactionPool, wallet, pubsub});
 
 app.use(bodyParser.json());
 
@@ -31,6 +33,12 @@ app.get("/api/blocks", (req, res) => {
 
 app.get("/api/transaction-pool-map", (req, res) => {
   res.json(transactionPool.transactionMap);
+});
+
+app.get("/api/mine-transactions", (req, res) => {
+  transactionMiner.mineTransactions();
+
+  res.redirect("/api/blocks");
 });
 
 app.post("/api/mine", (req, res) => {
