@@ -19,14 +19,18 @@ const PORT = PEER_POST || DEFAULT_PORT;
 
 const app = express();
 const blockchain = new Blockchain();
-const pubsub = new PubSub({blockchain});
 const transactionPool = new TransactionPool();
+const pubsub = new PubSub({blockchain, transactionPool});
 const wallet = new Wallet();
 
 app.use(bodyParser.json());
 
 app.get("/api/blocks", (req, res) => {
   res.json(blockchain.chain);
+});
+
+app.get("/api/transaction-pool-map", (req, res) => {
+  res.json(transactionPool.transactionMap);
 });
 
 app.post("/api/mine", (req, res) => {
@@ -55,12 +59,12 @@ app.post("/api/transact", (req, res) => {
   }
   transactionPool.setTransaction(transaction);
 
-  console.log("Transaction added", transactionPool);
+  pubsub.broadcastTransaction(transaction);
 
   res.json({type: "success",transaction});
 });
 
-const syncChains = () => {
+const syncWithRootState = () => {
   request({url: `${ROOT_NODE_ADDRESS}/api/blocks`}, (error, response, body) => {
     if(!error && response.statusCode  === 200) {
       const rootChain = JSON.parse(body);
@@ -73,12 +77,25 @@ const syncChains = () => {
       console.log(response.statusCode, error);
     }
   });
+
+  request({url: `${ROOT_NODE_ADDRESS}/api/transaction-pool-map`}, (error, response, body) => {
+    if(!error && response.statusCode  === 200) {
+      const rootTransactionMap = JSON.parse(body);
+
+      console.log("Syncing transaction pool", rootTransactionMap);
+
+      transactionPool.setTransactionMap(rootTransactionMap);
+    }
+    else {
+      console.log(response.statusCode, error);
+    }
+  });
 };
 
 app.listen(PORT, () => {
   console.log(`Listening on localhost:${PORT}`)
 
   if(PORT !== DEFAULT_PORT) {
-    syncChains();
+    syncWithRootState();
   }
 });
