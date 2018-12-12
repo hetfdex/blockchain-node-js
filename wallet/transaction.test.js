@@ -140,7 +140,7 @@ describe("Transaction", () => {
           expect(transaction.outputMap[nextRecipient]).toEqual(nextAmount + addedAmount);
         });
 
-        it("subtracts the `amount` from sender output", () => {
+        it("subtracts `amount` from sender output", () => {
           expect(transaction.outputMap[senderWallet.publicKey]).toEqual(originalSenderOutput - nextAmount - addedAmount);
         });
       });

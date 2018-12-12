@@ -15,7 +15,6 @@ class Wallet {
 
   createTransaction ({recipient, amount}) {
     if (amount > this.balance) {
-      //Overkill?
       throw new Error("Creation Fail: Amount exceeds Balance");
     }
 
