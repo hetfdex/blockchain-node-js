@@ -149,6 +149,20 @@ describe("Blockchain", () => {
         });
       });
     });
+
+    describe("the `validateTransaction` flag is true", () => {
+      it("calls isValidTransactionData()", () => {
+        const validTransactionDataMock = jest.fn();
+
+        blockchain.isValidTransactionData = validTransactionDataMock;
+
+        replacementChain.addBlock({data: "test-data"});
+
+        blockchain.replaceChain(replacementChain.chain, true);
+
+        expect(validTransactionDataMock).toHaveBeenCalled();
+      });
+    });
   });
 
   describe("isValidTransactionData()", () => {
