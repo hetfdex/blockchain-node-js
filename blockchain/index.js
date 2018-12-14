@@ -1,5 +1,8 @@
+const {MINER_REWARD_INPUT, MINER_REWARD_AMOUNT} = require("../config");
 const {cryptoHash} = require("../util");
 const Block = require("./block");
+const Transaction = require("../wallet/transaction")
+const Wallet = require("../wallet")
 
 class Blockchain {
   constructor() {
@@ -68,6 +71,55 @@ class Blockchain {
     console.log("Blockchain replaced", chain);
 
     this.chain = chain;
+  }
+
+  isValidTransactionData ({chain}) {
+    for (let i = 1; i < chain.length; i++) {
+      const block = chain[i];
+      const transactionSet = new Set();
+
+      let minerRewardTransactionCount = 0;
+
+      for (let transaction of block.data) {
+        if (transaction.input.address == MINER_REWARD_INPUT.address) {
+          minerRewardTransactionCount++;
+
+          if(minerRewardTransactionCount > 1) {
+            console.error("Transaction Data Validation Fail: Block must have only one miner reward transaction");
+
+            return false;
+          }
+          if (Object.values(transaction.outputMap)[0] !== MINER_REWARD_AMOUNT) {
+            console.error("Transaction Data Validation Fail: Miner reward amount must be exactly", MINER_REWARD_AMOUNT);
+
+            return false;
+          }
+        } else {
+          if (!Transaction.isValidTransaction(transaction)) {
+            console.error("Transaction Data Validation Fail: Invalid transaction");
+
+            return false;
+          }
+
+          const actualWalletBalance = Wallet.calculateBalance({chain: this.chain, address: transaction.input.address});
+
+          if (transaction.input.amount !== actualWalletBalance) {
+            console.error("Transaction Data Validation Fail: Invalid wallet balance");
+
+            return false;
+          }
+
+          if (transactionSet.has(transaction)) {
+            console.error("Transaction Data Validation Fail: Block must not have duplicate transactions");
+
+            return false;
+          } else {
+            transactionSet.add(transaction);
+          }
+        }
+      }
+    }
+    return true;
   }
 }
 
